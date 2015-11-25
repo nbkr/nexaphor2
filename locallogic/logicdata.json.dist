@@ -1,0 +1,7 @@
+{
+    "light1": {
+        "intopic": "tfin1/port2", 
+        "type": "lights.Light", 
+        "outtopic": "tfout1/port0/set"
+    }
+}
