@@ -56,7 +56,7 @@ class TimedLightWithOnOff(Helper):
     """ see ../docs/helpers.rst """
 
     def __init__(self, controller, name, config):
-        super(TimedLight, self).__init__(controller, name, config)
+        super(TimedLightWithOnOff, self).__init__(controller, name, config)
         self._interval = config['interval']
         self._timeleft = self._interval
         self._shutdown = False
@@ -108,7 +108,7 @@ class TimedLightWithOnOff(Helper):
             self._c.publish(self._config['outtopic'], 'off')
 
     def _message_trigger(self, topic, message):
-        if self._mode == 'timed' && message == 'up':
+        if self._mode == 'timed' and message == 'up':
             self._logger.debug('Resetting Countdown at "{}"'.format(self._name))
             self._timeleft = self._interval
 
@@ -120,6 +120,6 @@ class TimedLightWithOnOff(Helper):
         if topic == self._config['intopic-mode']:
             self._message_modeswitch(topic, message)
 
-        if topic == self._config['intopic-trigger']:
+        if topic == self._config['intopic']:
             self._message_trigger(topic, message)
 
