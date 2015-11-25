@@ -50,6 +50,33 @@ Configexampe
         "outtopic": "tfout1/port0/set"
     }
 
+TimedLightWithOnOff
+-------------------
+A TimedLightWithOnOff behaves mostly like a TimedLight. I.E. it will send 'up'
+on it's *outtopic* if it receives an 'up' on it's *intopic*. After *interval*
+number of seconds it will send out 'down'.
+
+In difference to the TimedLight the TimedLightWithOnOff has a second intopic,
+call *intopic-mode*.
+
+There it accepts *on*, *off* and *timed*. If you send off to that topic the
+light will turn off and stay off.
+
+If you send 'on' it will turn on and stay on.
+
+If you send 'timed' it will switch back to the normal behaviour of a TimedLight.
+
+Configexampe
+````````````
+..
+    "timedlightonoff1": {
+        "type": "lights.TimedLightWithOnOff", 
+        "interval": 30
+        "intopic": "tfin1/port2", 
+        "intopic-mode": "modeswitchtimedlight1"
+        "outtopic": "tfout1/port0/set"
+    }
+
 
 Forwarders
 ==========
