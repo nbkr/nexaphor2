@@ -26,9 +26,7 @@
         <script>
             function publish(topic, message) {
                 console.log('Publishing in topic "' + topic + '" the message "' + message + '"');
-                socket.emit('publish', 
-                        {topic: topic,
-                         message: message});
+                socket.emit(topic, message);
             }
 
             // Getting the inital state of the lamp.
@@ -38,6 +36,9 @@
         Status Licht 1: <span id='licht1'>unbekannt</span><br>
         <button onClick="publish('tfout1/port0/set', 'up'); return false">Licht An</button>
         <button onClick="publish('tfout1/port0/set', 'down'); return false">Licht Aus</button>
+        <hr>
+        <button onClick="publish('test', 'test'); return false">Test</button>
+        <button onClick="publish('test2', 'test'); return false">Test2</button>
 
     </body>
 </html>
