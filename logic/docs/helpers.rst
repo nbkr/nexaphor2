@@ -126,3 +126,37 @@ Configexampe
         "outtopic": ["tfout1/port0",
                      "tfout1/port1"]
     }
+
+
+Shutters
+========
+
+SimpleShutter
+-------------
+A SimpleShutter is meant for controlling shuttermotors. A shuttermotor has two
+inputs for turning left/right or respectivly up and down. 
+
+The SimpleShutter accepts *up*, *down* and *stop* via it's *intopic*. stop means
+it sends 'down' to both of it's outtopics. 
+
+up results in sending a 'down' to outtopic-down and up to outtopic-up. 
+
+down is the same, but with reversed outtopics.
+
+SimpleShutter will send 'down' to both outtopics if it currently moved the motor
+'up' after 'interval-up'.
+
+It will send 'down' to both outtopics if it currentlich moved the motor 'down'
+after 'interval-down'.
+
+Configexampe
+````````````
+..
+    "shutter1": {
+        "type": "shutters.SimpleShutter", 
+        "intopic": "shutter1",
+        "outtopic-up": "tfout1/port0",
+        "outtopic-down": "tfout1/port1",
+        "interval-up": 30,
+        "interval-down": 30
+    }
