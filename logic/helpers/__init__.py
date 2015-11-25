@@ -18,7 +18,7 @@ class Helper(object):
 
     def _subscribe(self):
         """ Overwrite this """
-        self._logger.debug('Subscribing to topic "{}" by helpler "{}"'.format(
+        self._logger.debug('Subscribing to topic "{}" by helper "{}"'.format(
             self._config['intopic'],
             self._name))
         self._c.subscribe(self, self._name, self._config['intopic'])
