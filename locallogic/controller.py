@@ -10,6 +10,7 @@ class Controller(object):
         self._topic2objects = {}
         self._started = False
         self._logger = logging.getLogger('controller')
+        self._objects = []
 
     def _on_message(self, client, userdata, msg):
         self._logger.debug('received: {}/{}'.format(msg.topic, str(msg.payload)))
@@ -49,6 +50,7 @@ class Controller(object):
             name,
             config['type']))
         component = classobject(self, name, config) 
+        self._objects.append(component)
 
     def subscribe(self, component, name, topic):
         if topic not in self._topic2objects:
@@ -62,6 +64,10 @@ class Controller(object):
             self._logger.debug('sending: {}/{}'.format(
                 topic, message))
             self._client.publish(topic, message)
+
+    def shutdown(self):
+        for o in self._objects:
+            o.shutdown()
 
     def start(self):
         self._client.connect("localhost", 1883, 60)

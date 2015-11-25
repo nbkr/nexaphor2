@@ -21,5 +21,6 @@ if __name__ == '__main__':
         controller.start()
     except KeyboardInterrupt:
         logging.info("Stopping")
+        controller.shutdown()
     except Exception, msg:
         logging.debug(msg)

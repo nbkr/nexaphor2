@@ -27,3 +27,7 @@ class Helper(object):
     def message(self, topic, message):
         """ Overwrite this """
         pass
+
+    def shutdown(self):
+        """ Called by the controller when the sytem stops """
+        pass
