@@ -46,7 +46,7 @@ function subscribe(topic, object) {
 
 
 function setup(config) {
-    socket = io.connect('http://' + config['meta']['socketio']['host'] + ':' + config['meta']['socketio']['port']);
+    socket = io.connect('//' + config['meta']['socketio']['host'] + ':' + config['meta']['socketio']['port']);
 
     // Deside on which page we are.
     var page = config['meta']['mainpage'];
