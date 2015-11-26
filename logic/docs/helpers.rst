@@ -187,3 +187,24 @@ Configexampe
         "interval-up": 30,
         "interval-down": 30
     }
+
+
+Misc
+====
+
+Impulsegiver
+------------
+
+An Impulsegiver waits for an *up* on it's intopic and then sends out an *up*
+followed by a *down* after *interval* number of milliseconds
+
+If the Impulsegiver get's another *up* while the interval is running, it will be
+ignored.
+
+..
+    "dooropener1": {
+        "type": "misc.Impulsegiver", 
+        "intopic": "door1",
+        "outtopic": "tfout2/port3/set",
+        "interval": "500",
+    }
