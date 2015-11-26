@@ -12,9 +12,13 @@ client.on('connect', function () {
     }
 
     var lines = data.trim().split("\n")
+    console.log(lines.length)
     for (var i = 0; i < lines.length; i++) {
-        console.log('Subscribing to ' + lines[i].trim());
-        client.subscribe(lines[i].trim());
+        console.log(i);
+        if (lines[i].trim() != '') {
+            console.log('Subscribing to ' + lines[i].trim());
+            client.subscribe(lines[i].trim());
+        }
     }
   });
 });

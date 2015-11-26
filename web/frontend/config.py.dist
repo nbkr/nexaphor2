@@ -1,0 +1,23 @@
+#! /usr/bin/env python
+# coding: utf-8
+
+import json
+
+config = {}
+config['meta'] = {}
+config['meta']['label'] = 'Schöllkrippen'
+config['meta']['mainpage'] = 'page1'
+config['meta']['socketio'] = {}
+config['meta']['socketio']['host'] = 'schoellkl2.fritz.box'
+config['meta']['socketio']['port'] = '8080'
+config['pages'] = {}
+config['pages']['page1'] = {}
+config['pages']['page1']['label'] = 'QuickConfig'
+config['pages']['page1']['items'] = []
+config['pages']['page1']['items'].append({
+                                            'type': 'upbutton',
+                                            'label': 'Haustür',
+                                            'outtopic': 'door1'
+                                          })
+
+print json.dumps(config, indent=4);
