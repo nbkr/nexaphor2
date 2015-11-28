@@ -14,7 +14,7 @@ tagtype = 0
 
 
 def on_idin(client, name, mask, flank):
-    # publish message
+    name = name.replace('#', '')
     for i in range(0, 4):
         if (mask & (1 << i)):
             # Pin "i" fired and it went
@@ -27,6 +27,7 @@ def on_idin(client, name, mask, flank):
             client.publish('{}/port{}'.format(name, i), state)
 
 def on_nfc(client, name, obj, state, idle):
+    name = name.replace('#', '')
 
     if idle:
         global tagtype
@@ -126,6 +127,9 @@ if __name__ == '__main__':
             c['ipcon'].connect(c['host'], c['port'])
 
     # Starting the other objects
+    # Python doesn't copy a string, this makes trouble with the callbacks
+    # as their 'name' changes. So I have to do this ugly workaround here.
+    run = 0
     for o in objects:
         c = objects[o]
 
@@ -134,7 +138,7 @@ if __name__ == '__main__':
             idin4 = IndustrialDigitalIn4(c['uid'], objects[c['ipcon']]['ipcon'])
             idin4.register_callback(
                 idin4.CALLBACK_INTERRUPT,
-                lambda mask, flank: on_idin(client, (o + '.')[:-1], mask, flank))
+                lambda mask, flank: on_idin(client, (o + run * '#'), mask, flank))
 
             # Enable interrupt on all 4 pins
             idin4.set_interrupt(idin4.get_interrupt() | (1 << 0)) 
@@ -152,7 +156,7 @@ if __name__ == '__main__':
 
             nfc.register_callback(
                 nfc.CALLBACK_STATE_CHANGED,
-                lambda state, idle: on_nfc(client, (o + '.')[:-1], nfc, state, idle))
+                lambda state, idle: on_nfc(client, (o + run * '#'), nfc, state, idle))
 
             # Starting the initial tag scan
             nfc.request_tag_id(nfc.TAG_TYPE_MIFARE_CLASSIC)
