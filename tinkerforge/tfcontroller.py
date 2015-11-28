@@ -6,7 +6,11 @@ from tinkerforge.ip_connection import IPConnection
 from tinkerforge.bricklet_industrial_digital_in_4 import IndustrialDigitalIn4
 from tinkerforge.bricklet_industrial_digital_out_4 \
             import IndustrialDigitalOut4
+from tinkerforge.bricklet_nfc_rfid import NFCRFID
 import json
+
+# Somehow needed for the NFC Reader
+tagtype = 0
 
 
 def on_idin(client, name, mask, flank):
@@ -21,6 +25,24 @@ def on_idin(client, name, mask, flank):
 
             logging.debug('sending: {}/port{}/{}'.format(name, i, state))
             client.publish('{}/port{}'.format(name, i), state)
+
+def on_nfc(client, name, obj, state, idle):
+
+    if idle:
+        tagtype = (tagtype + 1) % 3
+        obj.request_tag_id(tagtype)
+
+    if state == nfc.STATE_REQUEST_TAG_ID_READY:
+        logging.debug('I ({}) found a new tag!.'.format(name))
+        ret = obj.get_tag_id()
+        tagtype = str(ret.tag_type)
+        tagid = ''.join(map(
+            str, map(int, ret.tid[:ret.tid_length])))
+
+             
+        # Sending the tag to our topic
+        client.publish('{}'.format(name), tagid)
+
 
 def on_connect(client, userdata, flags, rc):
     # the digout subscribe to topics
@@ -121,6 +143,18 @@ if __name__ == '__main__':
         if c['type'] == 'idout':
             c['object'] = IndustrialDigitalOut4(c['uid'],
                                                 objects[c['ipcon']]['ipcon'])
+
+        if c['type'] == 'nfc':
+            nfc = NFCRFID(c['uid'],
+                           objects[c['ipcon']]['ipcon'])
+
+            nfc.register_callback(
+                nfc.CALLBACK_STATE_CHANGED,
+                lamdba state, idle: on_nfc(client, name, nfc, state, idle))
+
+            # Starting the initial tag scan
+            rfid.request_tag_id(nfc.TAG_TYPE_MIFARE_CLASSIC)
+
 
 
     # Looping over mqtt messages
