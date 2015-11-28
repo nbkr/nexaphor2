@@ -13,17 +13,8 @@ import json
 # Somehow needed for the NFC Reader
 tagtype = 0
 
-class NameKeeper(object):
 
-    def __init__(name):
-        self._name = name
-
-    def getName(self):
-        return self._name
-
-
-def on_idin(client, nameidin, mask, flank):
-    nameout1 = nameidin.replace('#', '')
+def on_idin(client, name, mask, flank):
     for i in range(0, 4):
         if (mask & (1 << i)):
             # Pin "i" fired and it went
@@ -32,12 +23,10 @@ def on_idin(client, nameidin, mask, flank):
             else:
                 state = 'down'
 
-            logging.debug('sending: {}/port{}/{}'.format(nameout1, i, state))
-            client.publish('{}/port{}'.format(nameout1, i), state)
+            logging.debug('sending: {}/port{}/{}'.format(name, i, state))
+            client.publish('{}/port{}'.format(name, i), state)
 
-def on_nfc(client, namenfc, obj, state, idle):
-    nameout2 = namenfc.replace('#', '')
-
+def on_nfc(client, name, obj, state, idle):
     if idle:
         global tagtype
         tagtype = (int(tagtype) + 1) % 3
@@ -53,8 +42,8 @@ def on_nfc(client, namenfc, obj, state, idle):
 
              
         # Sending the tag to our topic
-        logging.debug('sending: {}/{}'.format(nameout2, tagid))
-        client.publish('{}'.format(nameout2), tagid)
+        logging.debug('sending: {}/{}'.format(name, tagid))
+        client.publish('{}'.format(name), tagid)
 
 
 def on_connect(client, userdata, flags, rc):
