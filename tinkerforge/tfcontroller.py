@@ -150,7 +150,7 @@ if __name__ == '__main__':
 
             nfc.register_callback(
                 nfc.CALLBACK_STATE_CHANGED,
-                lamdba state, idle: on_nfc(client, name, nfc, state, idle))
+                lambda state, idle: on_nfc(client, name, nfc, state, idle))
 
             # Starting the initial tag scan
             rfid.request_tag_id(nfc.TAG_TYPE_MIFARE_CLASSIC)
