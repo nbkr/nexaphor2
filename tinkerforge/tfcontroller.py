@@ -43,6 +43,7 @@ def on_nfc(client, name, obj, state, idle):
 
              
         # Sending the tag to our topic
+        logging.debug('sending: {}/{}'.format(name, tagid))
         client.publish('{}'.format(name), tagid)
 
 
