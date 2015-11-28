@@ -2,6 +2,7 @@
 
 import logging
 import paho.mqtt.client as mqtt
+from functools import partial
 from tinkerforge.ip_connection import IPConnection
 from tinkerforge.bricklet_industrial_digital_in_4 import IndustrialDigitalIn4
 from tinkerforge.bricklet_industrial_digital_out_4 \
@@ -11,6 +12,14 @@ import json
 
 # Somehow needed for the NFC Reader
 tagtype = 0
+
+class NameKeeper(object):
+
+    def __init__(name):
+        self._name = name
+
+    def getName(self):
+        return self._name
 
 
 def on_idin(client, nameidin, mask, flank):
@@ -129,18 +138,15 @@ if __name__ == '__main__':
     # Starting the other objects
     # Python doesn't copy a string, this makes trouble with the callbacks
     # as their 'name' changes. So I have to do this ugly workaround here.
-    run = 0
-    name = {}
     for o in objects:
         c = objects[o]
-        name[run] = o[:]
 
         if c['type'] == 'idin':
             # Create object
             idin4 = IndustrialDigitalIn4(c['uid'], objects[c['ipcon']]['ipcon'])
             idin4.register_callback(
                 idin4.CALLBACK_INTERRUPT,
-                lambda mask, flank: on_idin(client, name[run], mask, flank))
+                partial(mask, flank) on_idin(client, NameKeeper(o[1, mask, flank))
 
             # Enable interrupt on all 4 pins
             idin4.set_interrupt(idin4.get_interrupt() | (1 << 0)) 
@@ -158,7 +164,7 @@ if __name__ == '__main__':
 
             nfc.register_callback(
                 nfc.CALLBACK_STATE_CHANGED,
-                lambda state, idle: on_nfc(client, name[run], nfc, state, idle))
+                partial(state, idle) on_nfc(client, name[run], nfc, state, idle))
 
             # Starting the initial tag scan
             nfc.request_tag_id(nfc.TAG_TYPE_MIFARE_CLASSIC)
