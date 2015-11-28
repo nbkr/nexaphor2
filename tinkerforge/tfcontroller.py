@@ -36,7 +36,6 @@ def on_nfc(client, name, obj, state, idle):
     if state == nfc.STATE_REQUEST_TAG_ID_READY:
         logging.debug('I ({}) found a new tag!.'.format(name))
         ret = obj.get_tag_id()
-        tagtype = str(ret.tag_type)
         tagid = ''.join(map(
             str, map(int, ret.tid[:ret.tid_length])))
 
