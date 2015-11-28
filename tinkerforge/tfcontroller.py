@@ -23,7 +23,7 @@ def on_idin(client, nameidin, mask, flank):
             else:
                 state = 'down'
 
-            logging.debug('sending: {}/port{}/{}'.format(nameoutput, i, state))
+            logging.debug('sending: {}/port{}/{}'.format(nameout1, i, state))
             client.publish('{}/port{}'.format(nameout1, i), state)
 
 def on_nfc(client, namenfc, obj, state, idle):
