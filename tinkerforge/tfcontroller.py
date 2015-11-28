@@ -130,7 +130,7 @@ if __name__ == '__main__':
     # Python doesn't copy a string, this makes trouble with the callbacks
     # as their 'name' changes. So I have to do this ugly workaround here.
     run = 0
-    name = []
+    name = {}
     for o in objects:
         c = objects[o]
         name[run] = o[:]
