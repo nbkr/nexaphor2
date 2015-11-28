@@ -30,7 +30,7 @@ def on_nfc(client, name, obj, state, idle):
 
     if idle:
         global tagtype
-        tagtype = (tagtype + 1) % 3
+        tagtype = (int(tagtype) + 1) % 3
         obj.request_tag_id(tagtype)
 
     if state == nfc.STATE_REQUEST_TAG_ID_READY:
