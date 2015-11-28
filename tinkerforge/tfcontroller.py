@@ -29,6 +29,7 @@ def on_idin(client, name, mask, flank):
 def on_nfc(client, name, obj, state, idle):
 
     if idle:
+        global tagtype
         tagtype = (tagtype + 1) % 3
         obj.request_tag_id(tagtype)
 
