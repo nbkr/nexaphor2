@@ -34,10 +34,12 @@ def on_nfc(client, name, obj, state, idle):
         obj.request_tag_id(tagtype)
 
     if state == nfc.STATE_REQUEST_TAG_ID_READY:
-        logging.debug('I ({}) found a new tag!.'.format(name))
         ret = obj.get_tag_id()
         tagid = ''.join(map(
             str, map(int, ret.tid[:ret.tid_length])))
+
+        logging.debug('I ({}) found a new tag with id "{}".'.format(
+            name, tagid))
 
              
         # Sending the tag to our topic
@@ -145,6 +147,7 @@ if __name__ == '__main__':
                                                 objects[c['ipcon']]['ipcon'])
 
         if c['type'] == 'nfc':
+            name = o[:]
             nfc = NFCRFID(c['uid'],
                            objects[c['ipcon']]['ipcon'])
 
