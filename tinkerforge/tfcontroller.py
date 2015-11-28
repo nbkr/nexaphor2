@@ -13,8 +13,8 @@ import json
 tagtype = 0
 
 
-def on_idin(client, name, mask, flank):
-    name = name.replace('#', '')
+def on_idin(client, nameidin, mask, flank):
+    nameout1 = nameidin.replace('#', '')
     for i in range(0, 4):
         if (mask & (1 << i)):
             # Pin "i" fired and it went
@@ -23,11 +23,11 @@ def on_idin(client, name, mask, flank):
             else:
                 state = 'down'
 
-            logging.debug('sending: {}/port{}/{}'.format(name, i, state))
-            client.publish('{}/port{}'.format(name, i), state)
+            logging.debug('sending: {}/port{}/{}'.format(nameoutput, i, state))
+            client.publish('{}/port{}'.format(nameout1, i), state)
 
-def on_nfc(client, name, obj, state, idle):
-    name = name.replace('#', '')
+def on_nfc(client, namenfc, obj, state, idle):
+    nameout2 = namenfc.replace('#', '')
 
     if idle:
         global tagtype
@@ -44,8 +44,8 @@ def on_nfc(client, name, obj, state, idle):
 
              
         # Sending the tag to our topic
-        logging.debug('sending: {}/{}'.format(name, tagid))
-        client.publish('{}'.format(name), tagid)
+        logging.debug('sending: {}/{}'.format(nameout2, tagid))
+        client.publish('{}'.format(nameout2), tagid)
 
 
 def on_connect(client, userdata, flags, rc):
