@@ -129,7 +129,7 @@ if __name__ == '__main__':
     # Starting the other objects
     # Python doesn't copy a string, this makes trouble with the callbacks
     # as their 'name' changes. So I have to do this ugly workaround here.
-    run = 0
+    run = 1
     for o in objects:
         c = objects[o]
 
