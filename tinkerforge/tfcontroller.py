@@ -129,16 +129,18 @@ if __name__ == '__main__':
     # Starting the other objects
     # Python doesn't copy a string, this makes trouble with the callbacks
     # as their 'name' changes. So I have to do this ugly workaround here.
-    run = 1
+    run = 0
+    name = []
     for o in objects:
         c = objects[o]
+        name[run] = o[:]
 
         if c['type'] == 'idin':
             # Create object
             idin4 = IndustrialDigitalIn4(c['uid'], objects[c['ipcon']]['ipcon'])
             idin4.register_callback(
                 idin4.CALLBACK_INTERRUPT,
-                lambda mask, flank: on_idin(client, (o + run * '#'), mask, flank))
+                lambda mask, flank: on_idin(client, name[run], mask, flank))
 
             # Enable interrupt on all 4 pins
             idin4.set_interrupt(idin4.get_interrupt() | (1 << 0)) 
@@ -156,7 +158,7 @@ if __name__ == '__main__':
 
             nfc.register_callback(
                 nfc.CALLBACK_STATE_CHANGED,
-                lambda state, idle: on_nfc(client, (o + run * '#'), nfc, state, idle))
+                lambda state, idle: on_nfc(client, name[run], nfc, state, idle))
 
             # Starting the initial tag scan
             nfc.request_tag_id(nfc.TAG_TYPE_MIFARE_CLASSIC)
