@@ -146,7 +146,7 @@ if __name__ == '__main__':
             idin4 = IndustrialDigitalIn4(c['uid'], objects[c['ipcon']]['ipcon'])
             idin4.register_callback(
                 idin4.CALLBACK_INTERRUPT,
-                partial(mask, flank) on_idin(client, NameKeeper(o[1, mask, flank))
+                partial(on_idin, client, o))
 
             # Enable interrupt on all 4 pins
             idin4.set_interrupt(idin4.get_interrupt() | (1 << 0)) 
@@ -164,7 +164,7 @@ if __name__ == '__main__':
 
             nfc.register_callback(
                 nfc.CALLBACK_STATE_CHANGED,
-                partial(state, idle) on_nfc(client, name[run], nfc, state, idle))
+                partial(on_nfc, client, o, nfc))
 
             # Starting the initial tag scan
             nfc.request_tag_id(nfc.TAG_TYPE_MIFARE_CLASSIC)
