@@ -201,10 +201,36 @@ followed by a *down* after *interval* number of milliseconds
 If the Impulsegiver get's another *up* while the interval is running, it will be
 ignored.
 
+Configexampe
+````````````
 ..
     "dooropener1": {
         "type": "misc.Impulsegiver", 
         "intopic": "door1",
         "outtopic": "tfout2/port3/set",
         "interval": "500",
+    }
+
+Translators
+===========
+
+SimpleTranslator
+----------------
+A simple signal translator will every signal that it get's via its *intopic*
+forward to it's *outtopic*. If the incoming signal matched any of the left sides
+of *translations* it will be translated to the approprate right side of
+*translataions*.
+
+Configexampe
+````````````
+..
+    "translator1": {
+        "type": "translators.SimpleTranslator", 
+        "intopic": "tfnfc1",
+        "outtopic": "door1",
+        "translations": {
+            "1234": "up"
+            "xyza": "down"
+            "abc": "timed"
+        }
     }
