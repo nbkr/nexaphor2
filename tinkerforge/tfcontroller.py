@@ -130,12 +130,11 @@ if __name__ == '__main__':
         c = objects[o]
 
         if c['type'] == 'idin':
-            name = o[:]
             # Create object
             idin4 = IndustrialDigitalIn4(c['uid'], objects[c['ipcon']]['ipcon'])
             idin4.register_callback(
                 idin4.CALLBACK_INTERRUPT,
-                lambda mask, flank: on_idin(client, name, mask, flank))
+                lambda mask, flank: on_idin(client, o[:], mask, flank))
 
             # Enable interrupt on all 4 pins
             idin4.set_interrupt(idin4.get_interrupt() | (1 << 0)) 
@@ -148,13 +147,12 @@ if __name__ == '__main__':
                                                 objects[c['ipcon']]['ipcon'])
 
         if c['type'] == 'nfc':
-            name = o[:]
             nfc = NFCRFID(c['uid'],
                            objects[c['ipcon']]['ipcon'])
 
             nfc.register_callback(
                 nfc.CALLBACK_STATE_CHANGED,
-                lambda state, idle: on_nfc(client, name, nfc, state, idle))
+                lambda state, idle: on_nfc(client, o[:], nfc, state, idle))
 
             # Starting the initial tag scan
             nfc.request_tag_id(nfc.TAG_TYPE_MIFARE_CLASSIC)
