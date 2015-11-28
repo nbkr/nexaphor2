@@ -161,6 +161,7 @@ if __name__ == '__main__':
             # Starting the initial tag scan
             nfc.request_tag_id(nfc.TAG_TYPE_MIFARE_CLASSIC)
 
+        run = run + 1
 
 
     # Looping over mqtt messages
