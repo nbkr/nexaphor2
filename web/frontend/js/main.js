@@ -20,7 +20,7 @@ function publish(topic, message) {
 
 function message(topic, message) {
     // Find the objects that are subscribed to this topic, and pass them topic and message.
-    if (! topic in topics2components) {
+    if (! (topic in topics2components)) {
         return;
     }
 
