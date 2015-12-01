@@ -40,7 +40,7 @@ SwitchForTimedLightWithOnOff.prototype.message = function (topic, msg) {
 
 SwitchForTimedLightWithOnOff.prototype.renderHtml = function (div) {
     var myself = this;
-    $('#' + div).append('<button type="button" class="btn btn-block btn-default" id="timedlight_' + this.id + '"><span class="glyphicon glyphicon-time"></span> ' + this.config['label'] + '</button><br>');
+    $(div).append('<button type="button" class="btn btn-block btn-default" id="timedlight_' + this.id + '"><span class="glyphicon glyphicon-time"></span> ' + this.config['label'] + '</button><br>');
     $('#timedlight_' + this.id).click(function () {
             myself.toggle();
         });
