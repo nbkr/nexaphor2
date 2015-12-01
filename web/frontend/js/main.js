@@ -31,7 +31,7 @@ function message(topic, message) {
 }
 
 function subscribe(topic, object) {
-    if (! topic in topics2components) {
+    if (! (topic in topics2components)) {
         topics2components[topic] = [];
     }
 
