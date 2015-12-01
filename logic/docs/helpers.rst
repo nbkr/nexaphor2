@@ -66,6 +66,11 @@ If you send 'on' it will turn on and stay on.
 
 If you send 'timed' it will switch back to the normal behaviour of a TimedLight.
 
+On *outtopic-mode* the helper will send out the current state of it is in
+everytime it switched the state. If you send *current* to the intopic-mode the
+helper won't change anything but will send out the current mode it is in (on,
+off, timed)
+
 Configexampe
 ````````````
 ..
@@ -73,8 +78,9 @@ Configexampe
         "type": "lights.TimedLightWithOnOff", 
         "interval": 30
         "intopic": "tfin1/port2", 
-        "intopic-mode": "modeswitchtimedlight1"
-        "outtopic": "tfout1/port0/set"
+        "intopic-mode": "modeswitchtimedlight1",
+        "outtopic": "tfout1/port0/set",
+        "outtopic-mode": "timedlight1mode"
     }
 
 
