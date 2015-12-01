@@ -25,7 +25,7 @@ function message(topic, message) {
     }
 
     for (var i = 0; topics2components[topic].length; i++) {
-        c = topics2components['topic'][i];
+        c = topics2components[topic][i];
         c.message(topic, message);
     }
 }
