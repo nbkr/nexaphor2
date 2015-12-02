@@ -25,8 +25,7 @@ function message(topic, message) {
     }
 
     var c = null;
-    console.log(topics2components);
-    console.log(topic);
+    console.log(topics2components[topic]);
     for (var i = 0; topics2components[topic].length; i++) {
         c = topics2components[topic][i];
         c['message'](topic, message);
