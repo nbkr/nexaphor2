@@ -27,9 +27,9 @@ function message(topic, message) {
     console.log('received: ' + topic + '/' + message)
 
     var c = null;
-    for (var i = 0; topics2components[topic].length; i++) {
+    for (var i = 0; i < topics2components[topic].length; i++) {
         c = topics2components[topic][i];
-        c.message(topic, message);
+            c.message(topic, message);
     }
 }
 

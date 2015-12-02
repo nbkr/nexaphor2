@@ -12,7 +12,6 @@ client.on('connect', function () {
     }
 
     var lines = data.trim().split("\n")
-    console.log(lines.length)
     for (var i = 0; i < lines.length; i++) {
         console.log(i);
         if (lines[i].trim() != '') {
