@@ -7,9 +7,15 @@ SwitchForTimedLightWithOnOff = function (config) {
     this.id = makeid();
     this.state = 'off';
 
+    // subscribing outside of the construtor, because the object
+    // has to exist
+    this.subscribe();
+};
+
+SwitchForTimedLightWithOnOff.prototype.subscribe = function() {
+
     // Subscribing to the intopic to get status messages.
-    var myself = this;
-    subscribe(this.config['intopic'], myself);
+    subscribe(this.config['intopic']);
 
     // to get the current mode of the timed light
     // we send out a message to set the ligh to 
