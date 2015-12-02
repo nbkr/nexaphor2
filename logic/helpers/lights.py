@@ -108,7 +108,7 @@ class TimedLightWithOnOff(Helper):
         if message == 'off':
             self._mode = 'off'
             self._c.publish(self._config['outtopic-mode'], self._mode)
-            self._c.publish(self._config['outtopic'], 'off')
+            self._c.publish(self._config['outtopic'], 'down')
 
         if message == 'current':
             self._c.publish(self._config['outtopic-mode'], self._mode)
