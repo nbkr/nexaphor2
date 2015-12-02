@@ -48,8 +48,9 @@ io.on('connection', function(socket) {
             var topic = lines[i].trim()
             console.log('Adding socket.io forwarding: ' + topic);
             socket.on(topic, function(data) {
-                console.log('publishing ' + topic + '/' + data); 
-                client.publish(topic, data);
+                var ptopic = topic;
+                console.log('publishing ' + ptopic + '/' + data); 
+                client.publish(ptopic, data);
             });
         }
     });
