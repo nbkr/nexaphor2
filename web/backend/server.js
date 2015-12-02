@@ -3,6 +3,15 @@ var mqtt    = require('mqtt');
 var client  = mqtt.connect({ port: 1883, host: 'localhost'});
 var fs = require('fs');
 
+function bindSocketTopic(socket, topic) {
+    var ptopic = topic;
+
+    socket.on(ptopic, function(data) {
+        console.log('publishing ' + ptopic + '/' + data); 
+        client.publish(ptopic, data);
+    });
+}
+
  
 client.on('connect', function () {
   // Reading the topics we should subscribe to.
@@ -13,7 +22,6 @@ client.on('connect', function () {
 
     var lines = data.trim().split("\n")
     for (var i = 0; i < lines.length; i++) {
-        console.log(i);
         if (lines[i].trim() != '') {
             console.log('Subscribing to ' + lines[i].trim());
             client.subscribe(lines[i].trim());
@@ -23,8 +31,10 @@ client.on('connect', function () {
 });
  
 client.on('message', function (topic, message) {
+  console.log('emmitting ' + topic + '/' + message.toString());
   io.sockets.emit(topic, message.toString());
 });
+
 
 io.on('connection', function(socket) {
     console.log('New Connection');
@@ -47,11 +57,7 @@ io.on('connection', function(socket) {
         for (var i = 0; i < lines.length; i++) {
             var topic = lines[i].trim()
             console.log('Adding socket.io forwarding: ' + topic);
-            socket.on(topic, function(data) {
-                var ptopic = topic;
-                console.log('publishing ' + ptopic + '/' + data); 
-                client.publish(ptopic, data);
-            });
+            bindSocketTopic(socket, topic);
         }
     });
     
