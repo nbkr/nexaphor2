@@ -32,12 +32,14 @@ function message(topic, message) {
     }
 }
 
-function subscribe(topic, object) {
+function subscribe(topic, obj) {
     if (! (topic in topics2components)) {
         topics2components[topic] = [];
     }
 
-    topics2components[topic].push(object);
+    console.log(obj);
+
+    topics2components[topic].push(obj);
 
     var ptopic = topic;
     socket.on(topic, function(data) {
