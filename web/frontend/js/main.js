@@ -25,9 +25,11 @@ function message(topic, message) {
     }
 
     var c = null;
+    console.log(topic2components);
+    console.log(topic);
     for (var i = 0; topics2components[topic].length; i++) {
         c = topics2components[topic][i];
-        c.message(topic, message);
+        c['message'](topic, message);
     }
 }
 
