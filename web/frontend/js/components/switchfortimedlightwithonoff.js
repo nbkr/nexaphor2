@@ -15,7 +15,7 @@ SwitchForTimedLightWithOnOff = function (config) {
 SwitchForTimedLightWithOnOff.prototype.subscribe = function() {
 
     // Subscribing to the intopic to get status messages.
-    subscribe(this.config['intopic']);
+    subscribe(this.config['intopic'], this);
 
     // to get the current mode of the timed light
     // we send out a message to set the ligh to 
