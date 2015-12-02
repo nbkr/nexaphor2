@@ -98,16 +98,16 @@ class TimedLightWithOnOff(Helper):
     def _message_modeswitch(self, topic, message):
         if message == 'timed':
             self._mode = 'timed'
-            self._c.publish(self._config['outtopic-mode'], 'timed')
+            self._c.publish(self._config['outtopic-mode'], self._mode)
 
         if message == 'on':
             self._mode = 'on'
-            self._c.publish(self._config['outtopic-mode'], 'up')
+            self._c.publish(self._config['outtopic-mode'], self._mode)
             self._c.publish(self._config['outtopic'], 'up')
 
         if message == 'off':
             self._mode = 'off'
-            self._c.publish(self._config['outtopic-mode'], 'off')
+            self._c.publish(self._config['outtopic-mode'], self._mode)
             self._c.publish(self._config['outtopic'], 'off')
 
         if message == 'current':
