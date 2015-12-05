@@ -172,13 +172,13 @@ if __name__ == '__main__':
             # Setting the configuration
             for i in range(0, len(c['inout'])):
                 if c['inout'][i] == 'o':
-                    id4.set_configuration(1 << i, 'o', False)
+                    io4.set_configuration(1 << i, 'o', False)
 
                 if c['inout'][i] == 'i':
-                    id4.set_configuration(1 << i, 'i', True)
-                    id4.set_interrupt(1 << i)
+                    io4.set_configuration(1 << i, 'i', True)
+                    io4.set_interrupt(1 << i)
 
-            c['object'] = id4
+            c['object'] = io4
 
         if c['type'] == 'idout':
             c['object'] = IndustrialDigitalOut4(c['uid'],
