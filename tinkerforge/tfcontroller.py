@@ -7,6 +7,7 @@ from tinkerforge.ip_connection import IPConnection
 from tinkerforge.bricklet_industrial_digital_in_4 import IndustrialDigitalIn4
 from tinkerforge.bricklet_industrial_digital_out_4 \
             import IndustrialDigitalOut4
+from tinkerforge.bricklet_io4 import BrickletIO4
 from tinkerforge.bricklet_nfc_rfid import NFCRFID
 import json
 
@@ -15,6 +16,18 @@ tagtype = 0
 
 
 def on_idin(client, name, mask, flank):
+    for i in range(0, 4):
+        if (mask & (1 << i)):
+            # Pin "i" fired and it went
+            if (flank & (1 << i)):
+                state = 'up'
+            else:
+                state = 'down'
+
+            logging.debug('sending: {}/port{}/{}'.format(name, i, state))
+            client.publish('{}/port{}'.format(name, i), state)
+
+def on_io4in(client, name, mask, flank):
     for i in range(0, 4):
         if (mask & (1 << i)):
             # Pin "i" fired and it went
@@ -47,9 +60,13 @@ def on_nfc(client, name, obj, state, idle):
 
 
 def on_connect(client, userdata, flags, rc):
-    # the digout subscribe to topics
     for o in objects:
+        # the digout subscribe to topics
         if objects[o]['type'] == 'idout':
+            client.subscribe('{}/+/set'.format(o))
+
+        # The outputs of the io4 subscribe to topics.
+        if objects[o]['type'] == 'io4':
             client.subscribe('{}/+/set'.format(o))
 
 def on_message(client, userdata, msg):
@@ -64,7 +81,7 @@ def on_message(client, userdata, msg):
         return
 
 
-    if objects[recp]['type'] == 'idout':
+    if objects[recp]['type'] == 'idout' or objects[recp]['type'] == 'io4':
         tfobject = objects[recp]['object']
         port = msg.topic[msg.topic.find('port') + 4:msg.topic.find('port') + 5]
         port = int(port)
@@ -94,7 +111,6 @@ def on_message(client, userdata, msg):
 
         logging.debug('sending: {}/port{}/{}'.format(recp, port, state))
         client.publish('{}/port{}'.format(recp, port), state)
-
 
 
 
@@ -142,6 +158,27 @@ if __name__ == '__main__':
             idin4.set_interrupt(idin4.get_interrupt() | (1 << 1)) 
             idin4.set_interrupt(idin4.get_interrupt() | (1 << 2)) 
             idin4.set_interrupt(idin4.get_interrupt() | (1 << 3))
+
+        if c['type'] == 'io4':
+
+            # Create object
+            io4 = BrickletIO4(c['uid'], objects[c['ipcon']]['ipcon'])
+
+            # Callback
+            io4.register_callback(
+                io4.CALLBACK_INTERRUPT,
+                partial(on_io4in, client, o))
+
+            # Setting the configuration
+            for i in range(0, len(c['inout']):
+                if c['inout'][i] == 'o':
+                    id4.set_configuration(1 << i, 'o', False)
+
+                if c['inout'][i] == 'i':
+                    id4.set_configuration(1 << i, 'i', True)
+                    id4.set_interrupt(1 << i)
+
+            c['object'] = id4
 
         if c['type'] == 'idout':
             c['object'] = IndustrialDigitalOut4(c['uid'],
