@@ -240,3 +240,19 @@ Configexampe
             "abc": "timed"
         }
     }
+
+System
+======
+
+CommandRunner
+----------------
+A CommandRunner runs it's *command* everytime it get's an *up* on it's intopic.
+
+Configexampe
+````````````
+..
+    "doorbell": {
+        "type": "system.CommandRunner", 
+        "intopic": "doorbell",
+        "command": "/usr/bin/mpg321 /etc/nexaphor2/logic/klingel.mp3"
+    }
