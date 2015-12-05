@@ -172,11 +172,13 @@ if __name__ == '__main__':
             # Setting the configuration
             for i in range(0, len(c['inout'])):
                 if c['inout'][i] == 'o':
+                    logging.debug('set an output')
                     io4.set_configuration(1 << i, 'o', False)
 
                 if c['inout'][i] == 'i':
+                    logging.debug('set an input')
                     io4.set_configuration(1 << i, 'i', True)
-                    io4.set_interrupt(1 << i)
+                    io4.set_interrupt(io4.get_interrupt() | (1 << i)) 
 
             c['object'] = io4
 
