@@ -170,7 +170,7 @@ if __name__ == '__main__':
                 partial(on_io4in, client, o))
 
             # Setting the configuration
-            for i in range(0, len(c['inout']):
+            for i in range(0, len(c['inout'])):
                 if c['inout'][i] == 'o':
                     id4.set_configuration(1 << i, 'o', False)
 
