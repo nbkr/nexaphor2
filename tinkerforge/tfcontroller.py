@@ -7,6 +7,8 @@ from tinkerforge.ip_connection import IPConnection
 from tinkerforge.bricklet_industrial_digital_in_4 import IndustrialDigitalIn4
 from tinkerforge.bricklet_industrial_digital_out_4 \
             import IndustrialDigitalOut4
+from tinkerforge.bricklet_industrial_digital_out_16 \
+            import IndustrialDigitalOut16
 from tinkerforge.bricklet_io4 import BrickletIO4
 from tinkerforge.bricklet_nfc_rfid import NFCRFID
 import json
@@ -39,6 +41,18 @@ def on_io4in(client, name, mask, flank):
             logging.debug('sending: {}/port{}/{}'.format(name, i, state))
             client.publish('{}/port{}'.format(name, i), state)
 
+def on_io16in(client, name, bank, mask, flank):
+    for i in range(0, 7):
+        if (mask & (1 << i)):
+            # Pin "i" fired and it went
+            if (flank & (1 << i)):
+                state = 'up'
+            else:
+                state = 'down'
+
+            logging.debug('sending: {}/port{}{}/{}'.format(name, bank, i, state))
+            client.publish('{}/port{}{}'.format(name, bank, i), state)
+
 def on_nfc(client, name, obj, state, idle):
     if idle:
         global tagtype
@@ -69,6 +83,10 @@ def on_connect(client, userdata, flags, rc):
         if objects[o]['type'] == 'io4':
             client.subscribe('{}/+/set'.format(o))
 
+        # The outputs of the io16 subscribe to topics.
+        if objects[o]['type'] == 'io16':
+            client.subscribe('{}/+/set'.format(o))
+
 def on_message(client, userdata, msg):
     # Checking for which object (currently only idouts) the message
     # was and setting the port appropriatly.
@@ -80,8 +98,39 @@ def on_message(client, userdata, msg):
     if not recp in objects:
         return
 
+    if objects[recp]['type'] in ['io16']:
+        tfobject = objects[recp]['object']
+        bank = msg.topic[msg.topic.find('port') + 4:msg.topic.find('port') + 5]
+        port = msg.topic[msg.topic.find('port') + 5:msg.topic.find('port') + 6]
+        port = int(port)
+        message = str(msg.payload)
+        state = message
 
-    if objects[recp]['type'] == 'idout' or objects[recp]['type'] == 'io4':
+        logging.debug("received: {}/port{}{}/set/{}".format(recp, bank, port, message))
+
+        if message not in ['up', 'down', 'current']:
+            return
+
+        if message == 'up':
+            tfobject.set_port(bank, tfobject.get_port(bank) | (1 << port))
+
+        if message == 'down':
+            tfobject.set_port(bank, tfobject.get_port(bank) & ~(1 << port))
+
+        # We need to be able to ask the current state of the port
+        # So basically we tell the port to set it to it's current
+        # value. This way it isn't confusing to /set the port to
+        # something like 'getvalue'.
+        if message == 'current':
+            if (tfobject.get_value() & (1 << port)):
+                state = 'up'
+            else:
+                state = 'down'
+
+        logging.debug('sending: {}/port{}{}/{}'.format(recp, bank, port, state))
+        client.publish('{}/port{}{}'.format(recp, bank, port), state)
+
+    if objects[recp]['type'] in ['idout', 'io4']:
         tfobject = objects[recp]['object']
         port = msg.topic[msg.topic.find('port') + 4:msg.topic.find('port') + 5]
         port = int(port)
@@ -179,6 +228,30 @@ if __name__ == '__main__':
                     io4.set_interrupt(io4.get_interrupt() | (1 << i)) 
 
             c['object'] = io4
+
+        if c['type'] == 'io16':
+
+            # Create object
+            io16 = BrickletIO16(c['uid'], objects[c['ipcon']]['ipcon'])
+
+            # Callback
+            io16.register_callback(
+                io16.CALLBACK_INTERRUPT,
+                partial(on_io16in, client, o))
+
+            # Setting the configuration
+            for port in ['a', 'b']:
+                for i in range(0, len(c['inout_' + port])):
+                    if c['inout_' + port][i] == 'o':
+                        io16.set_configuration(port, 1 << i, 'o', False)
+
+                    if c['inout'][i] == 'i':
+                        io16.set_configuration(port, 1 << i, 'i', True)
+                        io16.set_port_interrupt(
+                            port,
+                            io16.get_port_interrupt(port) | (1 << i)) 
+
+            c['object'] = io16
 
         if c['type'] == 'idout':
             c['object'] = IndustrialDigitalOut4(c['uid'],
