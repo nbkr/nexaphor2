@@ -56,8 +56,8 @@ class Controller(object):
         if topic not in self._topic2objects:
             self._topic2objects[topic] = []
 
-            self._topic2objects[topic].append({'object': component,
-                                               'name': name})
+        self._topic2objects[topic].append({'object': component,
+                                           'name': name})
 
     def publish(self, topic, message):
         if self._started:
