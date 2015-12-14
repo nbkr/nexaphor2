@@ -7,9 +7,8 @@ from tinkerforge.ip_connection import IPConnection
 from tinkerforge.bricklet_industrial_digital_in_4 import IndustrialDigitalIn4
 from tinkerforge.bricklet_industrial_digital_out_4 \
             import IndustrialDigitalOut4
-from tinkerforge.bricklet_industrial_digital_out_16 \
-            import IndustrialDigitalOut16
 from tinkerforge.bricklet_io4 import BrickletIO4
+from tinkerforge.bricklet_io16 import BrickletIO16
 from tinkerforge.bricklet_nfc_rfid import NFCRFID
 import json
 
