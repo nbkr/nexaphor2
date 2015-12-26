@@ -13,9 +13,13 @@ Setup
 Install nginx, tinkerforge, nodejs, npm, pip, mosquitto on your raspberry.
 
 Run::
-    apt-get install nodejs-legacy nginx supervisord npm
+    apt-get install nginx supervisor python-pip
     pip install tinkerforge
     pip install ephem
+
+    # Install nodejs from it's binary distribution, don't use the version
+    # that comes with raspbian it seems to old.
+
     npm install socket.io
     npm install mqtt
      
