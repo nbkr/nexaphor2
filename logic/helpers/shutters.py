@@ -21,6 +21,8 @@ class SimpleShutter(Helper):
             if self._timeleft == 0:
                 self._c.publish(self._config['outtopic-up'], 'down')
                 self._c.publish(self._config['outtopic-down'], 'down')
+                self._c.publish(self._config['outtopic-status'], 'stop')
+                self._mode = 'stop'
 
             if self._timeleft >= 0:
                 self._timeleft = self._timeleft - 1 
