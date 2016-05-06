@@ -4,7 +4,15 @@
 var SimpleShutter = function (config) {
     this.config = config;
     this.id = makeid();
-}
+    this.onclass = 'btn-warning';
+    this.subscribe();
+};
+
+SimpleShutter.prototype.subscribe = function() {
+
+    // Subscribing to the intopic to get status messages.
+    subscribe(this.config['intopic'], this);
+};
 
 SimpleShutter.prototype.renderHtml = function (identifier) {
     var myself = this;
@@ -35,5 +43,23 @@ SimpleShutter.prototype.up = function () {
 }
 
 SimpleShutter.prototype.down = function () {
-    publish(this.config['outtopic'], 'up');
+    publish(this.config['outtopic'], 'down');
 }
+
+SimpleShutter.prototype.message = function (topic, msg) {
+    if (msg == 'up') {
+        $('#SimpleShutter_down_' + this.id).removeClass(this.onclass);
+        $('#SimpleShutter_up_' + this.id).addClass(this.onclass);
+    } 
+    
+    if (msg == 'down') {
+        $('#SimpleShutter_up_' + this.id).removeClass(this.onclass);
+        $('#SimpleShutter_down_' + this.id).addClass(this.onclass);
+    }
+
+    if (msg == 'stop') {
+        $('#SimpleShutter_down_' + this.id).removeClass(this.onclass);
+        $('#SimpleShutter_up_' + this.id).removeClass(this.onclass);
+    }
+}
+

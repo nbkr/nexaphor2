@@ -11,6 +11,7 @@ class SimpleShutter(Helper):
         self._intervalup = config['interval-up']
         self._intervaldown = config['interval-down']
         self._timeleft = -1 
+        self._mode = 'stop'
         self._shutdown = False
 
         start_new_thread(self.runner, ())
@@ -31,16 +32,32 @@ class SimpleShutter(Helper):
 
 
     def message(self, topic, message):
+        if self._mode != 'stop':
+            self._c.publish(self._config['outtopic-up'], 'down')
+            self._c.publish(self._config['outtopic-down'], 'down')
+            self._c.publish(self._config['outtopic-status'], 'stop')
+            self._mode = 'stop'
+            return
+
         if message == 'up':
             self._timeleft = self._intervalup
             self._c.publish(self._config['outtopic-down'], 'down')
             self._c.publish(self._config['outtopic-up'], 'up')
+            self._c.publish(self._config['outtopic-status'], 'up')
+            self._mode = 'up'
+            return
 
         if message == 'down':
             self._timeleft = self._intervaldown
             self._c.publish(self._config['outtopic-up'], 'down')
             self._c.publish(self._config['outtopic-down'], 'up')
+            self._c.publish(self._config['outtopic-status'], 'down')
+            self._mode = 'down'
+            return
 
         if message == 'stop':
             self._c.publish(self._config['outtopic-up'], 'down')
             self._c.publish(self._config['outtopic-down'], 'down')
+            self._c.publish(self._config['outtopic-status'], 'stop')
+            self._mode = 'stop'
+            return
