@@ -1,0 +1,40 @@
+// vim: set syn=javascript :
+//
+// This is the setup file for your tinkerforge installation
+// you basically list all bricklets and tfcontroller will connect
+// to them.
+{
+    "ipcon1": {
+        "type": "ipcon", 
+        "host": "192.168.1.1", 
+        "port": 4223
+    }, 
+    "tfin1": {
+        "type": "idin", 
+        "ipcon": "ipcon1", 
+        "uid": "abc"
+    }, 
+    "tfout2": {
+        "type": "idout", 
+        "ipcon": "ipcon1", 
+        "uid": "def"
+    }, 
+    "tfout1": {
+        "type": "idout", 
+        "ipcon": "ipcon1", 
+        "uid": "xyz"
+    },
+    "tfio41" : {
+        "type": "io4", 
+        "ipcon": "ipcon1", 
+        "uid": "xyz",
+        "inout": ["i", "o", "o", "i"]
+    },
+    "tfio161" : {
+        "type": "io16", 
+        "ipcon": "ipcon1", 
+        "uid": "xyz",
+        "inout_a": ["i", "o", "o", "i", "i", "i", "i", "o"],
+        "inout_b": ["i", "o", "o", "i", "i", "i", "i", "o"]
+    }
+}

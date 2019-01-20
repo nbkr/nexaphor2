@@ -10,7 +10,7 @@ from tinkerforge.bricklet_industrial_digital_out_4 \
 from tinkerforge.bricklet_io4 import BrickletIO4
 from tinkerforge.bricklet_io16 import BrickletIO16
 from tinkerforge.bricklet_nfc_rfid import NFCRFID
-import json
+import yaml
 
 # Somehow needed for the NFC Reader
 tagtype = 0
@@ -261,8 +261,8 @@ if __name__ == '__main__':
     logging.basicConfig(level=logging.DEBUG)
 
     logging.info('Reading configuration')
-    with open('tfdata.json') as data_file:    
-        objects = json.load(data_file)
+    with open('tfdata.yml') as data_file:    
+        objects = yaml.load(data_file)
 
 
     # Connecting to mqtt
