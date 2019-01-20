@@ -72,7 +72,101 @@ def on_nfc(client, name, obj, state, idle):
         client.publish('{}'.format(name), tagid)
 
 
+def on_ipcon_enmumerate(ipcon_name, objects):
+    # Starting all objects that are connected to the ipconnection that
+    # is going to be enumerated.
+    # Python doesn't copy a string, this makes trouble with the callbacks
+    # as their 'name' changes. So I have to do this ugly workaround here.
+    for o in objects:
+        c = objects[o]
+
+        if objects[c['ipcon']] != ipcon_name:
+            # Make sure only those objects get configured for which
+            # IPCon the call back has been called.
+            continue
+
+        if c['type'] == 'idin':
+            # Create object
+            idin4 = IndustrialDigitalIn4(c['uid'], objects[c['ipcon']]['ipcon'])
+            idin4.register_callback(
+                idin4.CALLBACK_INTERRUPT,
+                partial(on_idin, client, o))
+
+            # Enable interrupt on all 4 pins
+            idin4.set_interrupt(idin4.get_interrupt() | (1 << 0)) 
+            idin4.set_interrupt(idin4.get_interrupt() | (1 << 1)) 
+            idin4.set_interrupt(idin4.get_interrupt() | (1 << 2)) 
+            idin4.set_interrupt(idin4.get_interrupt() | (1 << 3))
+
+        if c['type'] == 'io4':
+
+            # Create object
+            io4 = BrickletIO4(c['uid'], objects[c['ipcon']]['ipcon'])
+
+            # Callback
+            io4.register_callback(
+                io4.CALLBACK_INTERRUPT,
+                partial(on_io4in, client, o))
+
+            # Setting the configuration
+            for i in range(0, len(c['inout'])):
+                if c['inout'][i] == 'o':
+                    io4.set_configuration(1 << i, 'o', False)
+
+                if c['inout'][i] == 'i':
+                    io4.set_configuration(1 << i, 'i', True)
+                    io4.set_interrupt(io4.get_interrupt() | (1 << i)) 
+
+            c['object'] = io4
+
+        if c['type'] == 'io16':
+
+            # Create object
+            io16 = BrickletIO16(c['uid'], objects[c['ipcon']]['ipcon'])
+
+            # Callback
+            io16.register_callback(
+                io16.CALLBACK_INTERRUPT,
+                partial(on_io16in, client, o))
+
+            # Setting the configuration
+            for port in ['a', 'b']:
+                for i in range(0, len(c['inout_' + port])):
+                    if c['inout_' + port][i] == 'o':
+                        io16.set_configuration(port, 1 << i, 'o', False)
+
+                    if c['inout'][i] == 'i':
+                        io16.set_configuration(port, 1 << i, 'i', True)
+                        io16.set_port_interrupt(
+                            port,
+                            io16.get_port_interrupt(port) | (1 << i)) 
+
+            c['object'] = io16
+
+        if c['type'] == 'idout':
+            c['object'] = IndustrialDigitalOut4(c['uid'],
+                                                objects[c['ipcon']]['ipcon'])
+
+        if c['type'] == 'nfc':
+            nfc = NFCRFID(c['uid'],
+                           objects[c['ipcon']]['ipcon'])
+
+            nfc.register_callback(
+                nfc.CALLBACK_STATE_CHANGED,
+                partial(on_nfc, client, o, nfc))
+
+            # Starting the initial tag scan
+            nfc.request_tag_id(nfc.TAG_TYPE_MIFARE_CLASSIC)
+
+
+def on_ipcon_connected(ipcon):
+    """ Everytime we connect, we just call the enumration, which will configure all connected bricks """
+    ipcon.enumerate()
+
+    
+
 def on_connect(client, userdata, flags, rc):
+    """ Callback for connection to mqtt """
     for o in objects:
         # the digout subscribe to topics
         if objects[o]['type'] == 'idout':
@@ -186,86 +280,14 @@ if __name__ == '__main__':
         if c['type'] == 'ipcon':
             logging.info('Connecting to brickd')
             c['ipcon'] = IPConnection()
+            c['ipcon'].register_callback(c['ipcon'].CALLBACK_ENUMERATE, 
+                                          partial(on_ipcon_enumerate, o, objects))
+
+            c['ipcon'].register_callback(c['ipcon'].CALLBACK_CONNECTED, 
+                                          partial(on_ipcon_connected, c['ipcon']))
             c['ipcon'].connect(c['host'], c['port'])
+            c['ipcon'].enumerate()
 
-    # Starting the other objects
-    # Python doesn't copy a string, this makes trouble with the callbacks
-    # as their 'name' changes. So I have to do this ugly workaround here.
-    for o in objects:
-        c = objects[o]
-
-        if c['type'] == 'idin':
-            # Create object
-            idin4 = IndustrialDigitalIn4(c['uid'], objects[c['ipcon']]['ipcon'])
-            idin4.register_callback(
-                idin4.CALLBACK_INTERRUPT,
-                partial(on_idin, client, o))
-
-            # Enable interrupt on all 4 pins
-            idin4.set_interrupt(idin4.get_interrupt() | (1 << 0)) 
-            idin4.set_interrupt(idin4.get_interrupt() | (1 << 1)) 
-            idin4.set_interrupt(idin4.get_interrupt() | (1 << 2)) 
-            idin4.set_interrupt(idin4.get_interrupt() | (1 << 3))
-
-        if c['type'] == 'io4':
-
-            # Create object
-            io4 = BrickletIO4(c['uid'], objects[c['ipcon']]['ipcon'])
-
-            # Callback
-            io4.register_callback(
-                io4.CALLBACK_INTERRUPT,
-                partial(on_io4in, client, o))
-
-            # Setting the configuration
-            for i in range(0, len(c['inout'])):
-                if c['inout'][i] == 'o':
-                    io4.set_configuration(1 << i, 'o', False)
-
-                if c['inout'][i] == 'i':
-                    io4.set_configuration(1 << i, 'i', True)
-                    io4.set_interrupt(io4.get_interrupt() | (1 << i)) 
-
-            c['object'] = io4
-
-        if c['type'] == 'io16':
-
-            # Create object
-            io16 = BrickletIO16(c['uid'], objects[c['ipcon']]['ipcon'])
-
-            # Callback
-            io16.register_callback(
-                io16.CALLBACK_INTERRUPT,
-                partial(on_io16in, client, o))
-
-            # Setting the configuration
-            for port in ['a', 'b']:
-                for i in range(0, len(c['inout_' + port])):
-                    if c['inout_' + port][i] == 'o':
-                        io16.set_configuration(port, 1 << i, 'o', False)
-
-                    if c['inout'][i] == 'i':
-                        io16.set_configuration(port, 1 << i, 'i', True)
-                        io16.set_port_interrupt(
-                            port,
-                            io16.get_port_interrupt(port) | (1 << i)) 
-
-            c['object'] = io16
-
-        if c['type'] == 'idout':
-            c['object'] = IndustrialDigitalOut4(c['uid'],
-                                                objects[c['ipcon']]['ipcon'])
-
-        if c['type'] == 'nfc':
-            nfc = NFCRFID(c['uid'],
-                           objects[c['ipcon']]['ipcon'])
-
-            nfc.register_callback(
-                nfc.CALLBACK_STATE_CHANGED,
-                partial(on_nfc, client, o, nfc))
-
-            # Starting the initial tag scan
-            nfc.request_tag_id(nfc.TAG_TYPE_MIFARE_CLASSIC)
 
 
     # Looping over mqtt messages
