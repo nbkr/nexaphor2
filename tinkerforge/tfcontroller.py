@@ -259,7 +259,7 @@ def on_message(client, userdata, msg):
 
 if __name__ == '__main__': 
 
-    logging.basicConfig(level=logging.DEBUG)
+    logging.basicConfig(format='%(asctime)s|%(levelname)s|%(message)s', level=logging.DEBUG)
 
     logging.info('Reading configuration')
     with open('tfdata.yml') as data_file:    

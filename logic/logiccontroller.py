@@ -6,7 +6,7 @@ import json
 
 
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.DEBUG)
+    logging.basicConfig(format='%(asctime)s|%(levelname)s|%(message)s', level=logging.DEBUG)
     logging.info('Reading configuration')
 
     with open('logicdata.json') as data_file:    
