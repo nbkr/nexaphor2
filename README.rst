@@ -13,7 +13,7 @@ Setup
 Install nginx, tinkerforge, nodejs, npm, pip, mosquitto on your raspberry.
 
 Run::
-    apt-get install nginx supervisor python-pip
+    apt-get install nginx supervisor python-pip python-yaml
     pip install tinkerforge
     pip install ephem
 
@@ -38,7 +38,7 @@ Copy the repository to /opt/nexaphor2
 Create the configuration symlinks::
 
     cd /opt/nexaphor2/tinkerforge
-    ln -s /etc/nexaphor2/tinkerforge/tfdata.json
+    ln -s /etc/nexaphor2/tinkerforge/tfdata.yaml
 
     cd /opt/nexaphor2/logic
     ln -s /etc/nexaphor2/logic/logicdata.json
