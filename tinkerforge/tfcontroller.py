@@ -58,7 +58,7 @@ def on_nfc(client, name, obj, state, idle):
         tagtype = (int(tagtype) + 1) % 3
         obj.request_tag_id(tagtype)
 
-    if state == nfc.STATE_REQUEST_TAG_ID_READY:
+    if state == obj.STATE_REQUEST_TAG_ID_READY:
         ret = obj.get_tag_id()
         tagid = ''.join(map(
             str, map(int, ret.tid[:ret.tid_length])))
@@ -72,7 +72,7 @@ def on_nfc(client, name, obj, state, idle):
         client.publish('{}'.format(name), tagid)
 
 
-def on_ipcon_enmumerate(ipcon_name, objects):
+def on_ipcon_enumerate(ipcon_name, objects, uid, connected_uid, position, hardware_version, firmware_version, device_identifier, enumeration_type):
     # Starting all objects that are connected to the ipconnection that
     # is going to be enumerated.
     # Python doesn't copy a string, this makes trouble with the callbacks
@@ -80,7 +80,8 @@ def on_ipcon_enmumerate(ipcon_name, objects):
     for o in objects:
         c = objects[o]
 
-        if objects[c['ipcon']] != ipcon_name:
+
+        if c['ipcon'] != ipcon_name:
             # Make sure only those objects get configured for which
             # IPCon the call back has been called.
             continue
@@ -159,7 +160,7 @@ def on_ipcon_enmumerate(ipcon_name, objects):
             nfc.request_tag_id(nfc.TAG_TYPE_MIFARE_CLASSIC)
 
 
-def on_ipcon_connected(ipcon):
+def on_ipcon_connected(ipcon, connect_reason):
     """ Everytime we connect, we just call the enumration, which will configure all connected bricks """
     ipcon.enumerate()
 
@@ -286,7 +287,8 @@ if __name__ == '__main__':
             c['ipcon'].register_callback(c['ipcon'].CALLBACK_CONNECTED, 
                                           partial(on_ipcon_connected, c['ipcon']))
             c['ipcon'].connect(c['host'], c['port'])
-            c['ipcon'].enumerate()
+            # I don't need to call enumerate here, that will be done via the CONNECTED Callback
+            #c['ipcon'].enumerate()
 
 
 
