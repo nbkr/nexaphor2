@@ -2,15 +2,15 @@
 
 import logging
 from controller import Controller
-import json
+import yaml
 
 
 if __name__ == '__main__':
     logging.basicConfig(format='%(asctime)s|%(levelname)s|%(message)s', level=logging.DEBUG)
     logging.info('Reading configuration')
 
-    with open('logicdata.json') as data_file:    
-        objects = json.load(data_file)
+    with open('logicdata.yml') as data_file:    
+        objects = yaml.load(data_file)
 
     controller = Controller();
 
