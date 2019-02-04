@@ -60,8 +60,11 @@ function getCurrentPage(config) {
 }
 
 function renderContent(config) {
-    page = getCurrentPage(config)
+    // Clearing the old content
+    $('#nbkrcontent').innerHtml = '';
+
     // Add Items according to the page configration
+    page = getCurrentPage(config)
     for (var i = 0; i < config['pages'][page]['items'].length; i++) {
         var o = config['pages'][page]['items'][i];
 
@@ -69,6 +72,16 @@ function renderContent(config) {
         var component = new window[o['type']](o);
 
         component.renderHtml('#nbkrcontent');
+    }
+    
+    // Ading the menu - quick and dirty for now, we could just move the active class
+    $('#navmenu').innerHtml = '';
+    for (p in config['pages']) {
+        if (p == page) {
+            $('#navmenu').append('<li class="active"><a href="#' + p + '">' + config['pages'][p]['label'] + '</a></li>');
+        } else {
+            $('#navmenu').append('<li><a href="#' + p + '">' + config['pages'][p]['label'] + '</a></li>');
+        }
     }
 }
 
@@ -82,14 +95,6 @@ function setup(config) {
     $('#brandname').text(config['meta']['label']);
     $('title').text(config['meta']['label']);
 
-    // Ading the menu
-    for (p in config['pages']) {
-        if (p == page) {
-            $('#navmenu').append('<li class="active"><a href="#' + p + '">' + config['pages'][p]['label'] + '</a></li>');
-        } else {
-            $('#navmenu').append('<li><a href="#' + p + '">' + config['pages'][p]['label'] + '</a></li>');
-        }
-    }
 
     renderContent(config)
     window.addEventListener('hashchange', function() { renderContent(config) });
