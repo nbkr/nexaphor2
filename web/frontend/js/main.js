@@ -101,6 +101,11 @@ function setup(config) {
     $('#brandname').text(config['meta']['label']);
     $('title').text(config['meta']['label']);
 
+     var navMain = $("#navbar");
+     navMain.on("click", "a", null, function () {
+         navMain.collapse('hide');
+     });
+
 
     renderContent(config)
     window.addEventListener('hashchange', function() { renderContent(config) });
