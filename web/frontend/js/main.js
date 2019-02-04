@@ -47,6 +47,18 @@ function subscribe(topic, obj) {
 
 }
 
+function renderContent(config) {
+    // Add Items according to the page configration
+    for (var i = 0; i < config['pages'][page]['items'].length; i++) {
+        var o = config['pages'][page]['items'][i];
+
+        // Creating an object of this new type.
+        var component = new window[o['type']](o);
+
+        component.renderHtml('#nbkrcontent');
+    }
+}
+
 
 function setup(config) {
     socket = io.connect('//' + config['meta']['socketio']['host'] + ':' + config['meta']['socketio']['port']);
@@ -73,15 +85,8 @@ function setup(config) {
         }
     }
 
-    // Add Items according to the page configration
-    for (var i = 0; i < config['pages'][page]['items'].length; i++) {
-        var o = config['pages'][page]['items'][i];
-
-        // Creating an object of this new type.
-        var component = new window[o['type']](o);
-
-        component.renderHtml('#nbkrcontent');
-    }
+    renderContent(config)
+    window.addEventListener('hashchange', function() { renderContent(config) });
 }
 
 
