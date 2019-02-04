@@ -47,7 +47,20 @@ function subscribe(topic, obj) {
 
 }
 
+function getCurrentPage(config) {
+    var page = config['meta']['mainpage'];
+    var hash = window.location.hash.substring(1);
+    if (hash != '') {
+        if (hash in config['pages']) {
+            page = hash;
+        }
+    }
+
+    return page
+}
+
 function renderContent(config) {
+    page = getCurrentPage(config)
     // Add Items according to the page configration
     for (var i = 0; i < config['pages'][page]['items'].length; i++) {
         var o = config['pages'][page]['items'][i];
@@ -63,14 +76,7 @@ function renderContent(config) {
 function setup(config) {
     socket = io.connect('//' + config['meta']['socketio']['host'] + ':' + config['meta']['socketio']['port']);
 
-    // Deside on which page we are.
-    var page = config['meta']['mainpage'];
-    var hash = window.location.hash.substring(1);
-    if (hash != '') {
-        if (hash in config['pages']) {
-            page = hash;
-        }
-    }
+    page = getCurrentPage(config)
 
     // Setting the name
     $('#brandname').text(config['meta']['label']);
