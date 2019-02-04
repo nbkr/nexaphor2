@@ -109,6 +109,7 @@ function setup(config) {
 
     renderContent(config)
     window.addEventListener('hashchange', function() { renderContent(config) });
+    window.addEventListener('focus', function() { renderContent(config) });
 }
 
 
