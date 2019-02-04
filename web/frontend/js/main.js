@@ -61,7 +61,10 @@ function getCurrentPage(config) {
 
 function renderContent(config) {
     // Clearing the old content
-    $('#nbkrcontent').innerHTML = '';
+    var myNode = document.getElementById("nbkrcontent");
+    while (myNode.firstChild) {
+        myNode.removeChild(myNode.firstChild);
+    }
 
     // Add Items according to the page configration
     page = getCurrentPage(config)
@@ -75,7 +78,10 @@ function renderContent(config) {
     }
     
     // Ading the menu - quick and dirty for now, we could just move the active class
-    $('#navmenu').innerHTML = '';
+    var myNode = document.getElementById("navmenu");
+    while (myNode.firstChild) {
+        myNode.removeChild(myNode.firstChild);
+    }
     for (p in config['pages']) {
         if (p == page) {
             $('#navmenu').append('<li class="active"><a href="#' + p + '">' + config['pages'][p]['label'] + '</a></li>');
