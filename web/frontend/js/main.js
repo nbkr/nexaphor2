@@ -13,18 +13,25 @@ function makeid() {
 }
 
 function publish(topic, message) {
+
+    data = {};
+    data['topic'] = topic;
+    data['message'] = message;
+
+    socket.emit('clientmessage', data);
     console.log('emitting: ' + topic + '/' + message);
-    socket.emit(topic, message);
 }
 
 
 function message(topic, message) {
     // Find the objects that are subscribed to this topic, and pass them topic and message.
+    console.log('received: ' + topic + '/' + message)
+
     if (! (topic in topics2components)) {
         return;
     }
 
-    console.log('received: ' + topic + '/' + message)
+    console.log('forwarded: ' + topic + '/' + message)
 
     var c = null;
     for (var i = 0; i < topics2components[topic].length; i++) {
@@ -39,6 +46,8 @@ function subscribe(topic, obj) {
     }
 
     topics2components[topic].push(obj);
+ 
+    console.log('Subscribing to: ' + topic);
 
     var ptopic = topic;
     socket.on(topic, function(data) {
@@ -93,7 +102,11 @@ function renderContent(config) {
 
 
 function setup(config) {
-    socket = io.connect('//' + config['meta']['socketio']['host'] + ':' + config['meta']['socketio']['port']);
+    socket = io();
+
+    socket.on('connect', function (){
+       console.info('Connected');
+	});
 
     page = getCurrentPage(config)
 
