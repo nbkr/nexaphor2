@@ -104,25 +104,33 @@ function renderContent(config) {
 function setup(config) {
     socket = io();
 
-    socket.on('connect', function (){
-       console.info('Connected');
-	});
-
     page = getCurrentPage(config)
 
     // Setting the name
     $('#brandname').text(config['meta']['label']);
     $('title').text(config['meta']['label']);
 
-     var navMain = $("#navbar");
-     navMain.on("click", "a", null, function () {
-         navMain.collapse('hide');
-     });
 
+    var navMain = $("#navbar");
+    navMain.on("click", "a", null, function () {
+        navMain.collapse('hide');
+    });
 
-    renderContent(config)
     window.addEventListener('hashchange', function() { renderContent(config) });
     window.addEventListener('focus', function() { renderContent(config) });
+
+
+    var lconfig = config;
+    socket.on('connect', function (){
+       console.info('Connected');
+       // We render the page after he socket has connected as the components will subscribe
+       // themself after rendering. So we should be connected before hand.
+       renderContent(lconfig)
+	});
+
+
+
+
 }
 
 
