@@ -1,4 +1,5 @@
 import eventlet
+import logging
 from flask import Flask, render_template
 from flask_mqtt import Mqtt
 from flask_socketio import SocketIO
@@ -33,24 +34,26 @@ subscriptions = []
 @socketio.on('clientmessage')
 def handle_clientmessage(data):
     if data['topic'] in forwardings:
-        print("Publishing: {} with data {}".format(data['topic'], data['message']))
+        logging.debug("Publishing: {} with data {}".format(data['topic'], data['message']))
         mqtt.publish(data['topic'], data['message'])
 
 
 @mqtt.on_message()
 def handle_mqtt_message(client, userdata, message):
-    print("Emitting: {} with value {}".format(message.topic, message.payload.decode()))
+    logging.debug("Emitting: {} with value {}".format(message.topic, message.payload.decode()))
     socketio.emit(message.topic, message.payload.decode())
 
 
 @mqtt.on_connect()
 def handle_connect(client, userdata, flags, rc):
-    print('MQTT connected!')
+    logging.info('MQTT connected!')
     for line in subscriptions:
         print('Subscribing to: {}'.format(line.strip()))
         mqtt.subscribe(line.strip())
 
 if __name__ == '__main__':
+    logging.basicConfig(format='%(asctime)s|%(levelname)s|%(message)s', level=logging.DEBUG)
+
     with open('forwardings.txt') as k:
         for line in k:
             forwardings.append(line.strip())

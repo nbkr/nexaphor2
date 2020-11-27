@@ -21,7 +21,7 @@ SwitchForTimedLightWithOnOff.prototype.subscribe = function() {
     // we send out a message to set the ligh to 
     // the 'current' value. This way we will receive
     // the actual value back.
-    publish(this.config['outtopic'], 'current');
+    publish(this.config['outtopic'], 'status');
 };
 
 

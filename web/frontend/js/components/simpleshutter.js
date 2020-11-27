@@ -12,6 +12,10 @@ SimpleShutter.prototype.subscribe = function() {
 
     // Subscribing to the intopic to get status messages.
     subscribe(this.config['intopic'], this);
+
+    // We ask the system what the current status is, so we can
+    // set the lights accordingly.
+    publish(this.config['outtopic'], 'status');
 };
 
 SimpleShutter.prototype.renderHtml = function (identifier) {

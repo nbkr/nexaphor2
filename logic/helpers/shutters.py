@@ -34,7 +34,10 @@ class SimpleShutter(Helper):
 
 
     def message(self, topic, message):
-        if self._mode != 'stop':
+
+        # If we are currently moving and we get a message that issen't 'status'
+        # then we stop immediatelly.
+        if self._mode != 'stop' and message != 'status':
             self._c.publish(self._config['outtopic-up'], 'down')
             self._c.publish(self._config['outtopic-down'], 'down')
             self._c.publish(self._config['outtopic-status'], 'stop')
@@ -62,4 +65,8 @@ class SimpleShutter(Helper):
             self._c.publish(self._config['outtopic-down'], 'down')
             self._c.publish(self._config['outtopic-status'], 'stop')
             self._mode = 'stop'
+            return
+
+        if message == 'status':
+            self._c.publish(self._config['outtopic-status'], self._mode)
             return
