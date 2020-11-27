@@ -18,12 +18,29 @@
 
 import subprocess
 import time
+import atexit
+import signal
+
+processes = []
+
+def killall():
+     for p in processes:
+             p.kill() 
+
+
+atexit.register(killall)
+signal.signal(signal.SIGINT, killall)
+signal.signal(signal.SIGTERM, killall)
+
+
 
 p1 = subprocess.Popen('/usr/bin/sudo -u pi /usr/bin/python3 server.py', shell=True, stdin=None, stdout=None, stderr=None, close_fds=True)
+processes.append(p1)
 
 time.sleep(30)
 
-subprocess.Popen('/bin/systemctl restart mosquitto', shell=True)
+p2 = subprocess.Popen('/bin/systemctl restart mosquitto', shell=True)
+processes.append(p2)
 
 # I now can communication with the server again. This way it supervisorctl can stop it, hopefully.
 p1.communicate()
