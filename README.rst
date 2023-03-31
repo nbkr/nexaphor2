@@ -7,6 +7,9 @@ Nexaphor2
 My Home Automation System based on Tinkerforge, MQTT, a bit of Javascript, a bit
 more of Python and a Raspberry Pi (2 works, 3 and up is better)
 
+I've upgraded the project to Python3, fixed some code, and changed the part on how to create the 'custom' logic to the installation. This version of the software is therefore outdated and the repository therefore archived.
+
+
 Setup
 =====
 
